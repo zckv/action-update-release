@@ -1,0 +1,50 @@
+name: Action Update Release
+description: Update GitHub Release using GitHub REST API
+author: zckv
+
+inputs:
+  files:
+    description: Files paths to upload as release assets.
+    required: true
+  repository:
+    description: |
+      Repository to update the release on.
+      Default to current repository.
+    default: ${{ github.repository }}
+  tag:
+    description: Tag of the release to update.
+    required: true
+  token:
+    description: |
+      Token to authenticate to ghcr.io.
+      Default to github.token.
+    default: ${{ github.token }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Poetry and Poetry Install
+      shell: bash
+      run: |
+        if ! command -v poetry &> /dev/null
+        then
+          echo "poetry could not be found, installing it..."
+          curl -sSL https://install.python-poetry.org | python3 -
+          export PATH="$HOME/.local/bin:$PATH"
+        else
+          echo "poetry is already installed"
+        fi
+        poetry install
+    - name: Update Release  ${{inputs.tag}}
+      shell: bash
+      env:
+        INPUT_FILES: ${{ inputs.files }}
+        INPUT_REPOSITORY: ${{ inputs.repository }}
+        INPUT_TAG: ${{ inputs.tag }}
+        INPUT_TOKEN: ${{ inputs.token }}
+      run: >
+        poetry run update
+        --files $INPUT_FILES
+        --tag "$INPUT_TAG"
+        --token "$INPUT_TOKEN"
+        --project "$INPUT_REPOSITORY"

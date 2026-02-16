@@ -1,0 +1,17 @@
+---
+name: Test Action
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run Action
+        uses: ./
+        with:
+          files: "README.md"
+          tag: "test_release"
