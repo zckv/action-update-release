@@ -125,13 +125,15 @@ class Updater:
             )
 
         match response.status_code:
-            case 200:
+            case 201:
                 return
             case 401:
                 print("Unauthorized: Invalid authentication token.")
             case _:
+                print(
+                    f"Failed to upload asset: {path.name}. Status code: {response.status_code}"
+                )
                 response.raise_for_status()
-
         exit(1)
 
     def delete_asset(self, asset_id: int) -> None:
@@ -159,6 +161,9 @@ class Updater:
             case 401:
                 print("Unauthorized: Invalid authentication token.")
             case _:
+                print(
+                    f"Failed to delete asset: {asset_id}. Status code: {response.status_code}"
+                )
                 response.raise_for_status()
         exit(1)
 
