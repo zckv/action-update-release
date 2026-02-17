@@ -67,6 +67,8 @@ class Updater:
         self.token = args.token
         self.project = args.project
 
+        print(f"Files to update: {self.files}")
+
     def check_if_release_exists(self) -> dict:
         """
         Check if a release exists on GitHub.
@@ -205,8 +207,9 @@ class Updater:
             exit(1)
 
         files = self.get_provided_files()
-        toggle = True
         for file_name, path in files.items():
+            toggle = True
+            print(f"Processing file: {file_name}")
             for asset in existing_assets:
                 if asset["name"] == file_name:
                     self.delete_asset(asset["id"])
@@ -214,6 +217,9 @@ class Updater:
                     toggle = False
                     break
             if toggle:
+                print(
+                    f"File '{file_name}' does not exist in the release. Uploading as new asset."
+                )
                 self.upload_asset(upload_url, path)
 
 
