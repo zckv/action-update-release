@@ -19,7 +19,12 @@ inputs:
       Token to authenticate to ghcr.io.
       Default to github.token.
     default: ${{ github.token }}
-
+  workspace:
+    description: |
+      Working directory for the action.
+      Default to current working directory.
+    default: ${{ github.workspace }}
+    required: true
 runs:
   using: "composite"
   steps:
@@ -43,6 +48,7 @@ runs:
         INPUT_REPOSITORY: ${{ inputs.repository }}
         INPUT_TAG: ${{ inputs.tag }}
         INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_WORKSPACE: ${{ inputs.workspace }}
       run: >
         cd ${{ github.action_path }} &&
         poetry run update
@@ -50,3 +56,4 @@ runs:
         --tag "$INPUT_TAG"
         --token "$INPUT_TOKEN"
         --project "$INPUT_REPOSITORY"
+        --workspace "$INPUT_WORKSPACE"
