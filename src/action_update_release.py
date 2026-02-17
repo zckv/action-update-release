@@ -191,9 +191,15 @@ class Updater:
             FileNotFoundError: If no files match the provided patterns or paths.
         """
         loaded_files = {}
+        paths = []
 
         for str_path in self.files:
-            path = Path(str_path)
+            if "*" in str_path:
+                paths.extend(Path(self.workspace).glob(str_path))
+            else:
+                paths.append(Path(str_path))
+
+        for path in paths:
             if path.is_file():
                 loaded_files[path.name] = path
                 continue
@@ -202,7 +208,7 @@ class Updater:
                     if file.is_file():
                         loaded_files[file.name] = file
                 continue
-            print(f"Path does not exist: {str_path}")
+            print(f"Path does not exist: {path}")
         return loaded_files
 
     def __call__(self) -> None:
