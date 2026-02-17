@@ -34,6 +34,7 @@ runs:
         else
           echo "poetry is already installed"
         fi
+        cd ${{ github.action_path }}
         poetry install
     - name: Update Release  ${{inputs.tag}}
       shell: bash
@@ -43,6 +44,7 @@ runs:
         INPUT_TAG: ${{ inputs.tag }}
         INPUT_TOKEN: ${{ inputs.token }}
       run: >
+        cd ${{ github.action_path }} &&
         poetry run update
         --files $INPUT_FILES
         --tag "$INPUT_TAG"
