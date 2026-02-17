@@ -13,5 +13,5 @@ jobs:
       - name: Run Action
         uses: ./
         with:
-          files: "README.md"
+          files: README.md src/*.py
           tag: "test_release"
