@@ -1,3 +1,4 @@
+import os
 import requests
 
 from pathlib import Path
@@ -38,6 +39,12 @@ class UpdaterParser:
             required=True,
             help="Project name in the format of '[OWNER]/[REPO]'.",
         )
+        self.parser.add_argument(
+            "--workspace",
+            type=str,
+            required=True,
+            help="Workspace directory for the project.",
+        )
 
     def parse(self, args: list[str] | None = None) -> Namespace:
         """
@@ -66,6 +73,7 @@ class Updater:
         self.files = args.files
         self.token = args.token
         self.project = args.project
+        self.workspace = args.workspace
 
         print(f"Files to update: {self.files}")
 
@@ -199,6 +207,7 @@ class Updater:
 
     def __call__(self) -> None:
         """Update the release by checking if it exists, deleting existing assets if necessary, and uploading new assets."""
+        os.chdir(self.workspace)
         if release := self.check_if_release_exists():
             existing_assets: list[dict] = release.get("assets", [])
             upload_url: str = release.get("upload_url", "").split("{")[0]
