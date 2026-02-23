@@ -140,6 +140,11 @@ class Updater:
                 return
             case 401:
                 print("Unauthorized: Invalid authentication token.")
+            case 422:
+                print(
+                    f"Unprocessable Entity: The file '{path.name}' is too large or not large enough. "
+                )
+                return
             case _:
                 print(
                     f"Failed to upload asset: {path.name}. Status code: {response.status_code}"

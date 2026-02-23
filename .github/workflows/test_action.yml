@@ -18,9 +18,16 @@ jobs:
       - name: Check output
         shell: bash
         run: |
+          api="https://api.github.com/repos/zckv/action-update-release"
           read -r README_sum < <(sha256sum README.md)
           read -r action_sum < <(sha256sum src/action_update_release.py)
-          readarray -t asset_sums < <(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/zckv/action-update-release/releases/286913097/assets | jq '.[] | .digest')
+          readarray -t asset_sums < <(curl -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$api/releases/286913097/assets" \
+            | jq '.[] | .digest'
+          )
           if [[ ! *" $README_sum "* == " ${asset_sums[*]} " ]]; then
             echo "README.md was not uploaded correctly"
             exit 1
