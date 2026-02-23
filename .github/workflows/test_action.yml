@@ -33,5 +33,10 @@ jobs:
             | jq -r '.[] | .digest'
           )
           echo "Asset sums: ${asset_sums[*]}"
-          [[ " ${asset_sums[*]} " == *" $README_sum "* ]] || echo "README.md was not uploaded correctly" && exit 1
-          [[ " ${asset_sums[*]} " == *" $action_sum "* ]] || echo "src/action_update_release.py was not uploaded correctly" && exit 1
+          if [[ ! " ${asset_sums[*]} " == *" $README_sum "* ]]; then
+            echo "README.md was not uploaded correctly"
+            exit 1
+          elif [[ ! " ${asset_sums[*]} " == *" $action_sum "* ]]; then
+            echo "src/action_update_release.py was not uploaded correctly"
+            exit 1
+          fi
