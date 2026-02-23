@@ -23,12 +23,15 @@ jobs:
           read -r action_sum < <(sha256sum src/action_update_release.py | cut -d ' ' -f1)
           README_sum="sha256:$README_sum"
           action_sum="sha256:$action_sum"
+          echo "Expected README.md sum: $README_sum"
+          echo "Expected src/action_update_release.py sum: $action_sum"
           readarray -t asset_sums < <(curl -sL \
-          -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer ${{ github.token }}" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          "$api/releases/286913097/assets" \
-          | jq -r '.[] | .digest'
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$api/releases/286913097/assets" \
+            | jq -r '.[] | .digest'
           )
-          [[ " ${asset_sums[*]} " == *" $README_sum "* ]] ||echo "README.md was not uploaded correctly" && exit 1
-          [[ " ${asset_sums[*]} " == *" $action_sum "* ]] ||echo "src/action_update_release.py was not uploaded correctly" && exit 1
+          echo "Asset sums: ${asset_sums[*]}"
+          [[ " ${asset_sums[*]} " == *" $README_sum "* ]] || echo "README.md was not uploaded correctly" && exit 1
+          [[ " ${asset_sums[*]} " == *" $action_sum "* ]] || echo "src/action_update_release.py was not uploaded correctly" && exit 1
